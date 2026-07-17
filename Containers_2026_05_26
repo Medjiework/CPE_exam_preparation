@@ -1,0 +1,30 @@
+#include <iostream>
+#include <cassert>
+#include <algorithm>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+int main()
+{
+    int cas = 0;
+    string s;
+    while (cin >> s && s != "end" )
+    {
+        ++cas;
+
+         vector<int> tail;
+        for (char ch : s) {
+            int v = ch - 'A' + 1;
+            auto it = lower_bound(tail.begin(), tail.end(), v);
+            if (it == tail.end())
+                tail.push_back(v);
+            else
+                *it = v;
+        }
+        cout << "Case " << cas << ": " << tail.size() << "\n";
+    }
+
+    return 0;
+}
