@@ -14,14 +14,14 @@ int main()
     {
         ++cas;
 
-         vector<int> tail;
+         vector<int> tail; // here is a vector that stores only the top elements of many stacks 
         for (char ch : s) {
-            int v = ch - 'A' + 1;
+            int v = ch - 'A' + 1; // change character into integer value 
             auto it = lower_bound(tail.begin(), tail.end(), v);
             if (it == tail.end())
                 tail.push_back(v);
             else
-                *it = v;
+                *it = v; //*it acts just like a pointer 
         }
         cout << "Case " << cas << ": " << tail.size() << "\n";
     }
