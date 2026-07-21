@@ -1,0 +1,165 @@
+//my own solution 
+
+#include <iostream>
+#include <vector>
+//permutations problem
+
+using namespace std;
+
+//let's create the factorials 
+const int Maxn = 1000;
+const long long MOD = 1000000007;
+
+
+long long fact[Maxn + 1];
+
+void build_factorials()
+{
+    fact[0] = 1;
+    for(int i = 1; i <= Maxn; i++)
+    {
+        fact[i] = (fact[i - 1] * i )% MOD;
+
+    }
+}
+
+//let's create the combination function
+long long combination[Maxn + 1][Maxn + 1];
+
+void build_combination()
+{
+    combination[0][0] = 1;
+
+    for (int n = 1; n <= Maxn; n++)
+    {
+        combination[n][0] = 1;
+        combination[n][n] = 1;
+
+        for (int r = 1; r < n; r++)
+        {
+            combination[n][r] = (combination[n -1][r] + combination[n -1][r -1]) % MOD;
+
+        }
+
+    }
+
+}
+
+long long memo[Maxn + 1][Maxn + 1];
+bool calculated[Maxn + 1][Maxn + 1];
+
+long long solve(int N, int M, int K)
+{
+    //if all first M positions are fixed 
+    if (K == M)
+    {
+        return fact[N - M];
+    }
+
+    //if none of the first postions of M may be fixed 
+    if (K == 0)
+    {
+        if (calculated[N][M])
+        {
+            return memo[N][M];
+        }
+
+        long long answer = fact[N];
+
+        for(int fixed = 1; fixed <= M; fixed++)
+        {
+            answer -= solve(N, M, fixed);
+
+            if (answer < 0)
+            {
+                answer += MOD;
+            }
+        }
+
+        calculated[N][M] = true;
+        memo[N][M] = answer;
+
+        return answer; 
+
+    }
+
+    long long choosepositions = combination[M][K];
+
+    long long arrangeRemaining = solve(N - K, M - K , 0);
+
+    return (choosepositions * arrangeRemaining) % MOD;
+
+}
+
+int main()
+{
+    build_factorials();
+    build_combination();
+
+    int T ;
+    cin >> T;
+
+    for (int cas = 1; cas <= T; cas++)
+    {
+        int N, M, K;
+        cin >> N >> M >> K;
+
+        cout << "Case " << cas << ": " << solve(N, M, K) << endl;
+    }
+    return 0;
+}
+
+/*1
+5 3 2
+Case 1: 12*/
+
+//the solution of the corrected code 
+
+#include <iostream>
+using namespace std;
+
+#define LL long long
+#define MOD 1000000007LL
+
+LL F[1005];
+LL C[1005][1005];
+LL A[1005][1005];
+
+LL f(LL N, LL M, LL K){
+    if(M == K)return F[N-M];
+    if(K == 0){
+        if(A[N][M])return A[N][M];
+        LL ans = F[N];
+        for(int i=1;i<=M;i++){
+            ans -= f(N, M, i);
+            if(ans<0)ans+=MOD;
+        }
+        return A[N][M] = ans;
+    }
+    return (C[M][K] * f(N-K, M-K, 0))%MOD;
+}
+
+int main() {
+    // clock_t start = clock();
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    F[0] = F[1] = 1LL;
+    for(int i=2;i<1001;++i)F[i] = (F[i-1]*i)%MOD;
+
+    C[1][0] = C[1][1] = 1LL;
+    for(int i=2;i<1001;++i){
+        C[i][0] = 1LL;
+        for(int j=1;j<=i;++j){
+            C[i][j] = (C[i-1][j]+C[i-1][j-1])%MOD;
+        }
+    }
+    int n, kase;
+    cin>>kase;
+    for(int kk=0;kk<kase;++kk){
+        int N, M, K;
+        cin>>N>>M>>K;
+
+        cout << "Case " << (kk+1) << ": " << f(N, M, K) << endl;
+    }
+    // cout << "Spend Time: " << (double)(clock()-start)/CLOCKS_PER_SEC << endl;
+}
